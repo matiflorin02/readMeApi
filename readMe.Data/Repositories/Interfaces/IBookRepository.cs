@@ -8,14 +8,16 @@ namespace readMe.Data.Repositories.Interfaces
 {
     public interface IBookRepository
     {
+        void AddNewBook(Book entity);
+        void Delete(Book entity);
+        Task<bool> SaveChangesAsync();
+
         Task<List<Book>> GetBookList();
 
         Task<Book> GetBookById(int id);
 
-        Task<bool> UpdateBook(int id, Book book);
+        void UpdateBook(Book book);
 
-        Task<Book> AddNewBook(Book book);
-
-
+        Task<Book> GetBookByIsbn(string isbn);
     }
 }

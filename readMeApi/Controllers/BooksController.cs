@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using readMe.Data;
 using readMe.Data.Repositories.Interfaces;
 using readMe.Domain.Entities;
+using readMe.Domain.Models;
 
 namespace readMeApi.Controllers
 {
@@ -16,94 +18,129 @@ namespace readMeApi.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IMapper _mapper;
 
-        public BooksController(IBookRepository bookRepository)
+        public BooksController(IBookRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<List<BookModel>>> GetBooks()
         {
-            return await _bookRepository.GetBookList();
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookModel>());
+                var booksResults = await _bookRepository.GetBookList();
+                return _mapper.Map<List<Book>, List<BookModel>>(booksResults);
+            }
+            catch(Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    ex);
+            }
         }
 
-        // GET: api/Books/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        [HttpGet("{isbn}")]
+        public async Task<ActionResult<BookModel>> GetBookByIsbn(string isbn)
         {
-            var book = await _bookRepository.GetBookById(id);
-
-            if (book == null)
+            try
             {
-                return NotFound();
+                var bookResult = await _bookRepository.GetBookByIsbn(isbn);
+                return _mapper.Map<BookModel>(bookResult);
             }
-
-            return book;
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Recovering data for the book with id {isbn} failed");
+            }
         }
 
         // PUT: api/Books/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutBook(int id, Book book)
-        //{
-        //    if (id != book.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPut("{isbn}")]
+        public async Task<ActionResult<BookModel>> PutBook(string isbn, BookModel book)
+        {
+            try
+            {
+                var oldBook = await _bookRepository.GetBookByIsbn(isbn);
+                if (oldBook == null)
+                {
+                    return NotFound($"The book with the isbn {isbn} was not found");
+                }
 
-        //    _context.Entry(book).State = EntityState.Modified;
+                _mapper.Map(book, oldBook);
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!BookExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+                _bookRepository.UpdateBook(oldBook);
 
-        //    return NoContent();
-        //}
+                if (await _bookRepository.SaveChangesAsync())
+                {
+                    return _mapper.Map<BookModel>(oldBook);
+                }
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    "Updating a book gave a database error");
+            }
+
+            return BadRequest();
+        }
 
         // POST: api/Books
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<BookModel>> PostBook(BookModel model)
         {
-            var addedBook = await _bookRepository.AddNewBook(book);
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            try
+            {
+                var existingBook = await _bookRepository.GetBookByIsbn(model.ISBN);
+                if (existingBook != null)
+                {
+                    BadRequest("Book already exists");
+                }
+
+                //create new book
+                var newBook = _mapper.Map<Book>(model);
+                _bookRepository.AddNewBook(newBook);
+                if (await _bookRepository.SaveChangesAsync())
+                {
+                    return Created($"/api/books/{newBook.ISBN}", _mapper.Map<BookModel>(newBook));
+                }
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Adding the new book to the database failed");
+            }
+
+            return BadRequest();
         }
 
         // DELETE: api/Books/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Book>> DeleteBook(int id)
-        //{
-        //    var book = await _context.Books.FindAsync(id);
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{isbn}")]
+        public async Task<ActionResult<Book>> DeleteBook(string isbn)
+        {
+            try
+            {
+                var book = await _bookRepository.GetBookByIsbn(isbn);
+                if (book == null)
+                {
+                    return NotFound();
+                }
 
-        //    _context.Books.Remove(book);
-        //    await _context.SaveChangesAsync();
+                _bookRepository.Delete(book);
+                if (await _bookRepository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
 
-        //    return book;
-        //}
+            return BadRequest("Failed to delete book");
+        }
 
-        //private bool BookExists(int id)
-        //{
-        //    return _context.Books.Any(e => e.Id == id);
-        //}
     }
 }
