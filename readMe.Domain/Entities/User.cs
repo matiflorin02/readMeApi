@@ -8,6 +8,10 @@
 
         public string Password { get; set; }
 
-        public Wishlist Wishlist { get; set; }
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public Wishlist WishListBook { get; set; }
     }
 }

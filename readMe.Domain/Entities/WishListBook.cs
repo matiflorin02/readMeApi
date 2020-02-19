@@ -1,6 +1,6 @@
 ﻿namespace readMe.Domain.Entities
 {
-    public class AddedBooks
+    public class WishListBook
     {
         public int WishlistId { get; set; }
 

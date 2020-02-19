@@ -4,7 +4,7 @@ using System.Text;
 
 namespace readMe.Domain.Models
 {
-    public class AddedBookModel
+    public class WishListBook
     {
         public int WishListId { get; set; }
 

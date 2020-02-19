@@ -6,13 +6,16 @@ namespace readMe.Data.Repositories.Interfaces
 {
     public interface IUserRepository
     {
+        void AddNewUser(User user);
+
+        Task<bool> SaveChangesAsync();
+
         Task<List<User>> GetAllUsers();
-        User GetUserByEmail(string email);
+
+        Task<User> GetUserByEmail(string email);
 
         Task<User> GetUserById(int id);
 
-        Task<User> SaveUser(UserCredentials userCredentials);
-
-        Task<bool> UpdateUserInfo(int id, User user);
+        void UpdateUserInfo(User user);
     }
 }

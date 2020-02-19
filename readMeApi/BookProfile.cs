@@ -10,6 +10,12 @@ namespace readMeApi
         {
             this.CreateMap<Book, BookModel>()
                 .ReverseMap();
+
+            this.CreateMap<User, UserModel>()
+                .ReverseMap();
+
+            this.CreateMap<Wishlist, WishListModel>()
+                .ReverseMap();
         }
     }
 }

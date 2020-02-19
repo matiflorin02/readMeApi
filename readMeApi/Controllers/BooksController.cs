@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using readMe.Data;
 using readMe.Data.Repositories.Interfaces;
 using readMe.Domain.Entities;
 using readMe.Domain.Models;
@@ -32,7 +29,6 @@ namespace readMeApi.Controllers
         {
             try
             {
-                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookModel>());
                 var booksResults = await _bookRepository.GetBookList();
                 return _mapper.Map<List<Book>, List<BookModel>>(booksResults);
             }
@@ -53,7 +49,7 @@ namespace readMeApi.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                return StatusCode(StatusCodes.Status500InternalServerError,
                     $"Recovering data for the book with id {isbn} failed");
             }
         }
@@ -81,7 +77,7 @@ namespace readMeApi.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                return StatusCode(StatusCodes.Status500InternalServerError,
                     "Updating a book gave a database error");
             }
 

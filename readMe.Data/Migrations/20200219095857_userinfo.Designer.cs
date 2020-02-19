@@ -2,21 +2,38 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using readMe.Data;
 
 namespace readMe.Data.Migrations
 {
     [DbContext(typeof(BooksContext))]
-    partial class BooksContextModelSnapshot : ModelSnapshot
+    [Migration("20200219095857_userinfo")]
+    partial class userinfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("readMe.Domain.Entities.AddedBooks", b =>
+                {
+                    b.Property<int>("WishlistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WishlistId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("AddedBooks");
+                });
 
             modelBuilder.Entity("readMe.Domain.Entities.Book", b =>
                 {
@@ -78,21 +95,6 @@ namespace readMe.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("readMe.Domain.Entities.WishListBook", b =>
-                {
-                    b.Property<int>("WishlistId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.HasKey("WishlistId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("WishListBooks");
-                });
-
             modelBuilder.Entity("readMe.Domain.Entities.Wishlist", b =>
                 {
                     b.Property<int>("Id")
@@ -114,7 +116,7 @@ namespace readMe.Data.Migrations
                     b.ToTable("Wishlists");
                 });
 
-            modelBuilder.Entity("readMe.Domain.Entities.WishListBook", b =>
+            modelBuilder.Entity("readMe.Domain.Entities.AddedBooks", b =>
                 {
                     b.HasOne("readMe.Domain.Entities.Book", "Book")
                         .WithMany()

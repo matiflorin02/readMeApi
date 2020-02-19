@@ -7,5 +7,7 @@
         public int UserId { get; set; }
 
         public string ListName { get; set; }
+
+        public WishListBook WishListBooks { get; set; }
     }
 }

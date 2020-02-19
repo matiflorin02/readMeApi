@@ -15,7 +15,6 @@ using Microsoft.Extensions.Logging;
 using readMe.Data;
 using readMe.Data.Repositories;
 using readMe.Data.Repositories.Interfaces;
-using readMeApi.Data;
 
 namespace readMeApi
 {
@@ -35,6 +34,7 @@ namespace readMeApi
             services.AddLogging();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IWishListRepository, WishListRepository>();
             services.AddControllers();
             services.AddDbContext<BooksContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("readMeConnection")));
         }
