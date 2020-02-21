@@ -1,4 +1,6 @@
-﻿namespace readMe.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace readMe.Domain.Entities
 {
     public class Wishlist
     {
@@ -8,6 +10,6 @@
 
         public string ListName { get; set; }
 
-        public WishListBook WishListBooks { get; set; }
+        public List<WishListBook> WishListBooks { get; set; }
     }
 }

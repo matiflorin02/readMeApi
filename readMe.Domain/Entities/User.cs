@@ -1,4 +1,7 @@
-﻿namespace readMe.Domain.Entities
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace readMe.Domain.Entities
 {
     public class User
     {
@@ -12,6 +15,6 @@
 
         public string LastName { get; set; }
 
-        public Wishlist WishListBook { get; set; }
+        public List<Wishlist> WishListBook { get; set; }
     }
 }

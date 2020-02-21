@@ -6,8 +6,11 @@ namespace readMe.Domain.Models
 {
     public class WishListModel
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
 
         public string ListName { get; set; }
+
+        public List<BookModel> Books { get; set; }
     }
 }

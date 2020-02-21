@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using readMe.Domain.Entities;
 using readMe.Domain.Models;
 
@@ -15,6 +16,10 @@ namespace readMeApi
                 .ReverseMap();
 
             this.CreateMap<Wishlist, WishListModel>()
+                .ForMember(wish => wish.Books, opt=> opt.MapFrom(src=> src.WishListBooks.Select(s=>s.Book)))
+                .ReverseMap();
+
+            this.CreateMap<WishListBook, WishListBookModel>()
                 .ReverseMap();
         }
     }

@@ -86,7 +86,7 @@ namespace readMeApi.Controllers
 
         // POST: api/Wishlists
         [HttpPost]
-        public async Task<ActionResult<Wishlist>> PostWishlist(Wishlist wishlist)
+        public async Task<ActionResult<WishListModel>> PostWishlist(WishListModel wishlist)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace readMeApi.Controllers
                 _wishListRepository.AddNewWishList(newList);
                 if (await _wishListRepository.SaveChangesAsync())
                 {
-                    return CreatedAtAction("GetWishlist", new { id = wishlist.Id }, wishlist);
+                    return CreatedAtAction("GetWishlists", new { id = newList.Id }, newList);
                 }
             }
             catch (Exception)

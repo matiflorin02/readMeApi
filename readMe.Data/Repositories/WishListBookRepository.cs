@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +33,18 @@ namespace readMe.Data.Repositories
 
         public async Task<List<Wishlist>> GetAddedBooksForList(int userId)
         {
-           return await _context.Wishlists.Where(x=>x.UserId == userId).Include(w => w.WishListBooks).ThenInclude(wb => wb.Book).ToListAsync();
+            var items = await _context.Wishlists.Where(x => x.UserId == userId)
+                .Include(w => w.WishListBooks)
+                .ThenInclude(wb => wb.Book)
+                .ToListAsync()
+                ;
+
+            return items;
+        }
+
+        public async Task<WishListBook> GetItemForId(int id)
+        {
+            return await _context.WishListBooks.FindAsync(id);
         }
     }
 }
