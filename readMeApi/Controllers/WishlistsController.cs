@@ -132,5 +132,22 @@ namespace readMeApi.Controllers
         //{
         //    return _context.Wishlists.Any(e => e.Id == id);
         //}
+
+
+        // GET: api/Wishlists/5
+        [HttpGet("wishlistsName/{userId}")]
+        public async Task<ActionResult<List<WishListModel>>> GetWishlistsNameForUser(int userId)
+        {
+            try
+            {
+                var wishLists = await _wishListRepository.GetWishListsForUser(userId);
+                return _mapper.Map<List<WishListModel>>(wishLists);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Recovering data for the wishlist with id {userId} failed");
+            }
+        }
     }
 }

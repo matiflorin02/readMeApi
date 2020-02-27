@@ -72,7 +72,7 @@ namespace readMeApi.Controllers
 
                 if (await _bookRepository.SaveChangesAsync())
                 {
-                    return _mapper.Map<BookModel>(oldBook);
+                    return _mapper.Map<BookModel>(oldBook );
                 }
             }
             catch (Exception)

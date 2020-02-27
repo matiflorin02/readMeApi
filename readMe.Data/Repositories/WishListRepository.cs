@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using readMe.Data.Repositories.Interfaces;
 using readMe.Domain.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace readMe.Data.Repositories
 {
@@ -51,6 +52,11 @@ namespace readMe.Data.Repositories
         public void UpdateWishList(Wishlist wishList)
         {
             _context.Entry(wishList).State = EntityState.Modified;
+        }
+
+        public async Task<List<Wishlist>> GetWishListsForUser(int userId)
+        {
+            return await _context.Wishlists.Where(x => x.UserId == userId).ToListAsync();
         }
     }
 }

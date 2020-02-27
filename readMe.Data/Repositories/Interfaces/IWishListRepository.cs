@@ -20,5 +20,7 @@ namespace readMe.Data.Repositories.Interfaces
 
         void UpdateWishList(Wishlist wishList);
 
+        Task<List<Wishlist>> GetWishListsForUser(int userId);
+
     }
 }
